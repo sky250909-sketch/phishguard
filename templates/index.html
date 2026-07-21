@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PhishGuard URL Checker</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; display: flex;
+           justify-content: center; padding-top: 4rem; margin: 0; }
+    .box { background: white; padding: 2rem; border-radius: 8px;
+           box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 480px; }
+    h1 { font-size: 1.4rem; margin-bottom: 1rem; }
+    input[type="text"] { width: 100%; padding: 0.7rem; box-sizing: border-box;
+           font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 0.7rem; margin-top: 0.8rem; background: #222;
+           color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+    .result { margin-top: 1.5rem; padding: 1rem; border-radius: 6px; }
+    .safe { background: #e6f7ec; color: #1a7a3d; }
+    .unsafe { background: #fdeaea; color: #a3221f; }
+    .error { background: #fff4e5; color: #8a5a00; }
+    ul { margin: 0.5rem 0 0 1.2rem; padding: 0; }
+    .disclaimer { font-size: 0.8rem; color: #777; margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🛡️ PhishGuard URL Checker</h1>
+    <form action="/check" method="POST">
+      <input type="text" name="url" placeholder="Paste a URL to check..." required
+             value="{{ checked_url or '' }}">
+      <button type="submit">Check URL</button>
+    </form>
+
+    {% if result %}
+      {% if result.error %}
+        <div class="result error">{{ result.error }}</div>
+      {% elif result.safe %}
+        <div class="result safe">
+          ✅ No known phishing indicators found.
+        </div>
+      {% else %}
+        <div class="result unsafe">
+          🚨 This link looks suspicious:
+          <ul>
+            {% for reason in result.reasons %}
+              <li>{{ reason }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    {% endif %}
+
+    <div class="disclaimer">
+      This is a heuristic checker, not a guarantee. Always use 2FA and
+      avoid entering passwords after clicking links from DMs or comments.
+    </div>
+  </div>
+</body>
+</html>
